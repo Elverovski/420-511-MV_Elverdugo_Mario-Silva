@@ -12,7 +12,7 @@ public class EnemyPatrolWaypoints : MonoBehaviour
     public enum PatrolMode { Loop, PingPong }
 
     // États logiques d’animation (à utiliser plus tard avec l’Animator)
-    public enum AnimState { Idle, Walk, Run, Attack }
+    public enum AnimState { Idle, Walk, Run, Attack } 
 
     [Header("Waypoints en ordre")]
     public Transform[] points;             // Liste des points de patrouille
@@ -230,13 +230,13 @@ public class EnemyPatrolWaypoints : MonoBehaviour
 
         // --- Exemple d’utilisation future avec Animator ---
         // Option 1 : un paramètre int "State"
-        //animator.SetInteger("State", (int)currentState);
+        animator.SetInteger("State", (int)currentState);
         //
         // Option 2 : 4 booléens exclusifs "IsIdle", "IsWalk", etc.
-        animator.SetBool("IsIdle",   state == AnimState.Idle);
-        animator.SetBool("IsWalk",   state == AnimState.Walk);
-        animator.SetBool("IsRun",    state == AnimState.Run);
-        animator.SetBool("IsAttack", state == AnimState.Attack);
+        //animator.SetBool("IsIdle",   state == AnimState.Idle);
+        //animator.SetBool("IsWalk",   state == AnimState.Walk);
+        //animator.SetBool("IsRun",    state == AnimState.Run);
+        //animator.SetBool("IsAttack", state == AnimState.Attack);
     }
 
     // Oriente l’ennemi vers la cible (utile pour Attack)
