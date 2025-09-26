@@ -1,16 +1,24 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerHealth : MonoBehaviour
 {
+    [Header("UI - Coeurs")]
+    public GameObject heart1;         
+    public GameObject heart2;          
+    public GameObject heart3;
+
 
     private Animator animator;
 
     private void Start()
     {
         animator = GetComponent<Animator>();
+        UpdateHearts();
     }
 
-    public int maxHealth = 100;
+    public int maxHealth = 3;
     private int currentHealth;
     void Awake() => currentHealth = maxHealth;
 
@@ -19,6 +27,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("Player récupère " + amount + " HP. HP = " + currentHealth);
+        UpdateHearts();
     }
 
 
@@ -29,29 +38,48 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("Player prend " + dmg + " dégâts. HP restants = " + currentHealth);
 
+        UpdateHearts();
+
         if (currentHealth <= 0) Die();
     }
 
     void Die()
     {
         Debug.Log("Player est mort !");
-        // Ici : désactiver le joueur, lancer une animation, recharger la scène, etc.
-        // Exemple (selon ton architecture) :
         GetComponent<PlayerMove>().enabled = false;
         animator.SetTrigger("Dead");
-        // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    void UpdateHearts()
+    {
+        heart1.SetActive(false);
+        heart2.SetActive(false);
+        heart3.SetActive(false);
+
+        if (currentHealth >= 1) heart1.SetActive(true);
+        if (currentHealth >= 2) heart2.SetActive(true);
+        if (currentHealth >= 3) heart3.SetActive(true);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Healing"))
         {
-            Heal(30); 
+            Heal(1);
+            Destroy(collision.gameObject);
         }
         if (collision.CompareTag("Trap"))
         {
-            Die();
+            TakeDamage(1);
         }
+    }
+
+    public void Respawn()
+    {
+        currentHealth = 3;
+        animator.ResetTrigger("Dead");
+        animator.Play("Idle");
     }
 
 }

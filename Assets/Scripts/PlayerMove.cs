@@ -19,6 +19,8 @@ public class PlayerMove : MonoBehaviour
     // Indique si le joueur doit sauter à la prochaine frame physique
     private bool jump = false;
 
+    private bool isGrounded = false;
+
 
     void Awake()
     {
@@ -44,17 +46,13 @@ public class PlayerMove : MonoBehaviour
 
         // ---- Orientation du sprite ----
         if (x > 0f) { spriteRenderer.flipX = false; } 
-        if (x < 0f) { spriteRenderer.flipX = true; }  
+        if (x < 0f) { spriteRenderer.flipX = true; }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
         {
             jump = true; // signal qu’il faut sauter dans FixedUpdate
             audioSource.PlayOneShot(sfxJump);
 
-        }
-        if (Input.GetKeyUp(KeyCode.DownArrow))
-        {
-            jump = false;
         }
 
         // ---- Animation d’attaque ----
@@ -88,6 +86,24 @@ public class PlayerMove : MonoBehaviour
         {
             jump = false; 
             rb.AddForce(Vector2.up * 250f); 
+        }
+
+
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
         }
     }
 }

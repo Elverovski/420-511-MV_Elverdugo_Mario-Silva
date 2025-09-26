@@ -7,6 +7,9 @@ TagManager:
   - Hazard
   - Trap
   - Healing
+  - Walll
+  - Ground
+  - Checkpoint
   layers:
   - Default
   - TransparentFX
