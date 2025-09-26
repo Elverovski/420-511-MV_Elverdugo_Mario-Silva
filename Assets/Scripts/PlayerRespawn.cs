@@ -3,15 +3,17 @@ using UnityEngine;
 public class PlayerRespawn : MonoBehaviour
 {
     [SerializeField] private AudioClip checkpointSound;
+    public GameObject checkpoint;
 
     private Transform currentCheckPoint;
     private PlayerHealth playerHealth;
     private Animator animator;
+    
 
-    private void Awake()
+    void Awake()
     {
         playerHealth = GetComponent<PlayerHealth>();
-        animator = GetComponent<Animator>();
+        animator = checkpoint.GetComponent<Animator>();
     }
 
     public void Respawn()
@@ -27,10 +29,12 @@ public class PlayerRespawn : MonoBehaviour
     {
         if (collision.CompareTag("Checkpoint"))
         {
-            Debug.Log("Checkpoint active: " + collision.name);
+            
 
             currentCheckPoint = collision.transform;
-            animator.SetTrigger("appear");
+            animator.SetTrigger("Appear");
+            Debug.Log("Checkpoint active: " + collision.name);
+
 
         }
     }

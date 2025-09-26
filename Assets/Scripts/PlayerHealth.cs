@@ -11,7 +11,6 @@ public class PlayerHealth : MonoBehaviour
 
 
     private Animator animator;
-
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -48,7 +47,8 @@ public class PlayerHealth : MonoBehaviour
         Debug.Log("Player est mort !");
         GetComponent<PlayerMove>().enabled = false;
         animator.SetTrigger("Dead");
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     void UpdateHearts()

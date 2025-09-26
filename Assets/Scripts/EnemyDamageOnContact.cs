@@ -4,10 +4,10 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class EnemyDamageOnContact : MonoBehaviour
 {
-
+    public GameObject Player;
     public string playerTag = "Player";
 
-    public int damage = 3;
+    public int damage = 1;
 
 
     // Délai minimal entre deux coups sur le même joueur (en secondes).
