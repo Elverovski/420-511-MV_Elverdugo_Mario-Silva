@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,6 +11,9 @@ public class PlayerHealth : MonoBehaviour
     public GameObject heart2;          
     public GameObject heart3;
 
+
+    public GameObject myCanvasGameObject;
+    private bool restart = false;
 
     private Animator animator;
     private void Start()
@@ -42,13 +47,24 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0) Die();
     }
 
-    void Die()
+    public void Die()
     {
-        Debug.Log("Player est mort !");
-        GetComponent<PlayerMove>().enabled = false;
-        animator.SetTrigger("Dead");
+        
+        if (currentHealth == 0)
+        {
+            Debug.Log("Player est mort !");
+            GetComponent<PlayerMove>().enabled = false;
+            animator.SetTrigger("Dead");
+            ShowCanvas();
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        if(restart)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+       
+        
     }
 
     void UpdateHearts()
@@ -80,6 +96,16 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = 3;
         animator.ResetTrigger("Dead");
         animator.Play("Idle");
+    }
+
+    public void HideCanvas()
+    {
+        myCanvasGameObject.SetActive(false);
+    }
+
+    public void ShowCanvas()
+    {
+        myCanvasGameObject.SetActive(true);
     }
 
 }

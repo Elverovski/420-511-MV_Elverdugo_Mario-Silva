@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class PlayerRespawn : MonoBehaviour
@@ -29,7 +30,6 @@ public class PlayerRespawn : MonoBehaviour
     {
         if (collision.CompareTag("Checkpoint"))
         {
-            
 
             currentCheckPoint = collision.transform;
             animator.SetTrigger("Appear");
