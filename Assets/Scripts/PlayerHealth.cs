@@ -1,30 +1,26 @@
-using System;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-
 
 public class PlayerHealth : MonoBehaviour
 {
     [Header("UI - Coeurs")]
-    public GameObject heart1;         
-    public GameObject heart2;          
+    public GameObject heart1;
+    public GameObject heart2;
     public GameObject heart3;
 
+    [SerializeField] private PlayerRespawn respawnSystem;
 
-    public GameObject myCanvasGameObject;
-    private bool restart = false;
+    public int maxHealth = 3;
+    private int currentHealth;
 
     private Animator animator;
-    private void Start()
+
+    void Awake() => currentHealth = maxHealth;
+
+    void Start()
     {
         animator = GetComponent<Animator>();
         UpdateHearts();
     }
-
-    public int maxHealth = 3;
-    private int currentHealth;
-    void Awake() => currentHealth = maxHealth;
 
     public void Heal(int amount)
     {
@@ -34,8 +30,6 @@ public class PlayerHealth : MonoBehaviour
         UpdateHearts();
     }
 
-
-
     public void TakeDamage(int dmg)
     {
         currentHealth -= dmg;
@@ -44,38 +38,34 @@ public class PlayerHealth : MonoBehaviour
 
         UpdateHearts();
 
-        if (currentHealth <= 0) Die();
+        if (currentHealth <= 0)
+            Die();
     }
 
-    public void Die()
+    private void Die()
     {
-        
-        if (currentHealth == 0)
-        {
-            Debug.Log("Player est mort !");
-            GetComponent<PlayerMove>().enabled = false;
-            animator.SetTrigger("Dead");
-            ShowCanvas();
+        Debug.Log("Player est mort !");
+        GetComponent<PlayerMove>().enabled = false;
+        animator.SetTrigger("Dead");
 
-        }
+        Invoke(nameof(CallRespawn), 1f);
+    }
 
-        if(restart)
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-       
-        
+    private void CallRespawn()
+    {
+        respawnSystem.Respawn(); 
+        currentHealth = maxHealth; 
+        animator.ResetTrigger("Dead");
+        animator.Play("Idle");
+        GetComponent<PlayerMove>().enabled = true;
+        UpdateHearts();
     }
 
     void UpdateHearts()
     {
-        heart1.SetActive(false);
-        heart2.SetActive(false);
-        heart3.SetActive(false);
-
-        if (currentHealth >= 1) heart1.SetActive(true);
-        if (currentHealth >= 2) heart2.SetActive(true);
-        if (currentHealth >= 3) heart3.SetActive(true);
+        heart1.SetActive(currentHealth >= 1);
+        heart2.SetActive(currentHealth >= 2);
+        heart3.SetActive(currentHealth >= 3);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -85,27 +75,9 @@ public class PlayerHealth : MonoBehaviour
             Heal(1);
             Destroy(collision.gameObject);
         }
-        if (collision.CompareTag("Trap"))
+        else if (collision.CompareTag("Trap"))
         {
             TakeDamage(1);
         }
     }
-
-    public void Respawn()
-    {
-        currentHealth = 3;
-        animator.ResetTrigger("Dead");
-        animator.Play("Idle");
-    }
-
-    public void HideCanvas()
-    {
-        myCanvasGameObject.SetActive(false);
-    }
-
-    public void ShowCanvas()
-    {
-        myCanvasGameObject.SetActive(true);
-    }
-
 }

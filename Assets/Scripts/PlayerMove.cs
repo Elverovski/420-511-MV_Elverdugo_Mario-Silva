@@ -85,7 +85,7 @@ public class PlayerMove : MonoBehaviour
         if (jump) 
         {
             jump = false; 
-            rb.AddForce(Vector2.up * 250f); 
+            rb.AddForce(Vector2.up * 400f); 
         }
 
 

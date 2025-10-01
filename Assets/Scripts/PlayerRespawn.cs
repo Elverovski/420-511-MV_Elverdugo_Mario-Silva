@@ -1,28 +1,20 @@
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class PlayerRespawn : MonoBehaviour
 {
     [SerializeField] private AudioClip checkpointSound;
-    public GameObject checkpoint;
 
     private Transform currentCheckPoint;
-    private PlayerHealth playerHealth;
-    private Animator animator;
-    
-
-    void Awake()
-    {
-        playerHealth = GetComponent<PlayerHealth>();
-        animator = checkpoint.GetComponent<Animator>();
-    }
+    private Animator checkpointAnimator;
 
     public void Respawn()
     {
         if (currentCheckPoint != null)
         {
             transform.position = currentCheckPoint.position;
-            playerHealth.Respawn();
+ 
+            if (checkpointSound != null)
+                AudioSource.PlayClipAtPoint(checkpointSound, transform.position);
         }
     }
 
@@ -30,12 +22,12 @@ public class PlayerRespawn : MonoBehaviour
     {
         if (collision.CompareTag("Checkpoint"))
         {
-
             currentCheckPoint = collision.transform;
-            animator.SetTrigger("Appear");
-            Debug.Log("Checkpoint active: " + collision.name);
+            checkpointAnimator = collision.GetComponent<Animator>();
+            if (checkpointAnimator != null)
+                checkpointAnimator.SetTrigger("Appear");
 
-
+            Debug.Log("Checkpoint activé: " + collision.name);
         }
     }
 }
