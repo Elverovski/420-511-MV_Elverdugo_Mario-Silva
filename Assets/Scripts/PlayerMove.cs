@@ -21,6 +21,9 @@ public class PlayerMove : MonoBehaviour
 
     private bool isGrounded = false;
 
+    public Color originalColor = Color.white;
+    public Color damageColor = Color.red;
+
 
     void Awake()
     {
@@ -85,7 +88,7 @@ public class PlayerMove : MonoBehaviour
         if (jump) 
         {
             jump = false; 
-            rb.AddForce(Vector2.up * 400f); 
+            rb.AddForce(Vector2.up * 300f); 
         }
 
 
@@ -97,6 +100,10 @@ public class PlayerMove : MonoBehaviour
         {
             isGrounded = true;
         }
+        if (spriteRenderer != null && collision.gameObject.CompareTag("Enemy"))
+        {
+            spriteRenderer.color = damageColor;
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -104,6 +111,28 @@ public class PlayerMove : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+        }
+
+        if (spriteRenderer != null && collision.gameObject.CompareTag("Enemy"))
+        {
+            spriteRenderer.color = originalColor;
+        }
+
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Trap"))
+        {
+            spriteRenderer.color = damageColor;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Trap"))
+        {
+            spriteRenderer.color = originalColor;
         }
     }
 }

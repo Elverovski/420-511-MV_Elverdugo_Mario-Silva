@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -44,12 +45,12 @@ public class PlayerHealth : MonoBehaviour
             Die();
     }
 
-    private void Die()
+    private async void Die()
     {
         Debug.Log("Player est mort !");
         GetComponent<PlayerMove>().enabled = false;
         animator.SetTrigger("Dead");
-
+        await Task.Delay(3000);
         ShowCanvas(); 
         Invoke(nameof(CallRespawnOrReload), 5f); 
     }
