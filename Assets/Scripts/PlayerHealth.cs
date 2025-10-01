@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class PlayerHealth : MonoBehaviour
     public GameObject heart3;
 
     [SerializeField] private PlayerRespawn respawnSystem;
+    public GameObject targetCanvasGameObject;
 
     public int maxHealth = 3;
     private int currentHealth;
@@ -48,17 +50,27 @@ public class PlayerHealth : MonoBehaviour
         GetComponent<PlayerMove>().enabled = false;
         animator.SetTrigger("Dead");
 
-        Invoke(nameof(CallRespawn), 1f);
+        ShowCanvas(); 
+        Invoke(nameof(CallRespawnOrReload), 5f); 
     }
 
-    private void CallRespawn()
+    private void CallRespawnOrReload()
     {
-        respawnSystem.Respawn(); 
-        currentHealth = maxHealth; 
-        animator.ResetTrigger("Dead");
-        animator.Play("Idle");
-        GetComponent<PlayerMove>().enabled = true;
-        UpdateHearts();
+        HideCanvas(); 
+
+        if (respawnSystem != null && respawnSystem.HasCheckpoint())
+        {
+            respawnSystem.Respawn();
+            currentHealth = maxHealth;
+            animator.ResetTrigger("Dead");
+            animator.Play("Idle");
+            GetComponent<PlayerMove>().enabled = true;
+            UpdateHearts();
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
 
     void UpdateHearts()
@@ -79,5 +91,15 @@ public class PlayerHealth : MonoBehaviour
         {
             TakeDamage(1);
         }
+    }
+
+    public void ShowCanvas()
+    {
+        targetCanvasGameObject.SetActive(true);
+    }
+
+    public void HideCanvas()
+    {
+        targetCanvasGameObject.SetActive(false);
     }
 }

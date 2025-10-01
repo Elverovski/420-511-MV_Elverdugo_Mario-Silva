@@ -30,4 +30,10 @@ public class PlayerRespawn : MonoBehaviour
             Debug.Log("Checkpoint activé: " + collision.name);
         }
     }
+
+    public bool HasCheckpoint()
+    {
+        return currentCheckPoint != null;
+    }
+
 }
