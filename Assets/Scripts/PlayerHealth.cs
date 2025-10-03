@@ -1,6 +1,6 @@
+Ôªøusing System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Threading.Tasks;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -29,7 +29,7 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        Debug.Log("Player rÈcupËre " + amount + " HP. HP = " + currentHealth);
+        Debug.Log("Player r√©cup√®re " + amount + " HP. HP = " + currentHealth);
         UpdateHearts();
     }
 
@@ -37,7 +37,20 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth -= dmg;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        Debug.Log("Player prend " + dmg + " dÈg‚ts. HP restants = " + currentHealth);
+        Debug.Log("Player prend " + dmg + " d√©g√¢ts. HP restants = " + currentHealth);
+
+        
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            float knockbackForceX = 300f;  
+            float knockbackForceY = 250f;  
+            
+            float direction = GetComponent<SpriteRenderer>().flipX ? 1f : -1f;
+
+            rb.linearVelocity = Vector2.zero;
+            rb.AddForce(new Vector2(direction * knockbackForceX, knockbackForceY));
+        }
 
         UpdateHearts();
 
@@ -45,19 +58,20 @@ public class PlayerHealth : MonoBehaviour
             Die();
     }
 
+
     private async void Die()
     {
         Debug.Log("Player est mort !");
         GetComponent<PlayerMove>().enabled = false;
         animator.SetTrigger("Dead");
         await Task.Delay(3000);
-        ShowCanvas(); 
-        Invoke(nameof(CallRespawnOrReload), 5f); 
+        ShowCanvas();
+        Invoke(nameof(CallRespawnOrReload), 5f);
     }
 
     private void CallRespawnOrReload()
     {
-        HideCanvas(); 
+        HideCanvas();
 
         if (respawnSystem != null && respawnSystem.HasCheckpoint())
         {
@@ -67,6 +81,13 @@ public class PlayerHealth : MonoBehaviour
             animator.Play("Idle");
             GetComponent<PlayerMove>().enabled = true;
             UpdateHearts();
+
+
+            foreach (HealingItem item in FindObjectsByType<HealingItem>(FindObjectsSortMode.None))
+            {
+                item.ResetItem();
+            }
+
         }
         else
         {
@@ -85,8 +106,12 @@ public class PlayerHealth : MonoBehaviour
     {
         if (collision.CompareTag("Healing"))
         {
-            Heal(1);
-            Destroy(collision.gameObject);
+            HealingItem heal = collision.GetComponent<HealingItem>();
+            if (heal != null && heal.CanHeal())
+            {
+                Heal(1);
+                heal.Use();
+            }
         }
         else if (collision.CompareTag("Trap"))
         {
